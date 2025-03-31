@@ -276,6 +276,7 @@ TO User_chef_Projet
 DENY CONTROL ON mon_projet.Employe
 TO User_chef_Projet
 
-
+GRANT UPDATE ON OBJECT::mon_projet.Employe(adresse)
+TO User_chef_Projet
 
 
