@@ -250,5 +250,32 @@ VALUES('Eliezer', 'Mackendy', '03/28/2006', '', '', '',1);
 
 -- CREATION DE LOGIN
 CREATE LOGIN Maitre_oeuvre WITH PASSWORD = '1234' MUST_CHANGE, CHECK_EXPIRATION = ON;
-CREATE LOGIN Maitre_oeuvre WITH PASSWORD = '1234' MUST_CHANGE, CHECK_EXPIRATION = ON;
-CREATE LOGIN Maitre_oeuvre WITH PASSWORD = '1234' MUST_CHANGE, CHECK_EXPIRATION = ON;
+CREATE LOGIN "OCE\Test1" FROM WINDOWS
+CREATE LOGIN Admin_instance WITH PASSWORD = '1234' MUST_CHANGE, CHECK_EXPIRATION = ON;
+
+ALTER SERVER ROLE sysadmin ADD MEMBER Admin_instance
+
+
+
+-- CREATION D'ULITISATEUR
+
+CREATE USER User_gestionnaire FOR LOGIN Maitre_oeuvre;
+CREATE USER User_chef_Projet FOR LOGIN [OCE\Test1];
+CREATE USER User_ADM_instance FOR LOGIN Admin_instance
+
+-- ATTRIBUTION D'ACCESS
+GRANT INSERT, UPDATE, DELETE ON SCHEMA::mon_projet 
+TO User_gestionnaire;
+
+DENY INSERT, UPDATE, DELETE ON mon_projet.Employe
+TO User_gestionnaire;
+
+GRANT ALTER ON SCHEMA::mon_projet
+TO User_chef_Projet
+
+DENY CONTROL ON mon_projet.Employe
+TO User_chef_Projet
+
+
+
+
