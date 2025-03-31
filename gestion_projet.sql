@@ -242,12 +242,33 @@ CONSTRAINT pkID_Rapport PRIMARY KEY (id_rapport, date_rapport)
 -- REQUETES DE SELECTION
 
 SELECT * FROM [mon_projet].[Employe] AS Employes
-WHERE nom LIKE 'El%' AND nom LIKE '%^[a-f]'
+WHERE nom LIKE 'El%' AND nom NOT LIKE '%[a-f]'
 ORDER BY dateNaissance;
+
+SELECT COUNT(DISTINCT grade) AS nbr_grades_unique
+FROM mon_projet.Employe
+
+SELECT num_proj, nom
+FROM mon_projet.Employe e
+INNER JOIN mon_projet.Projet p
+ON p.num_serv = p.num_serv;
+
+SELECT matricule, nom FROM mon_projet.Employe
+ 
+WHERE num_serv > 1;
+
 
 INSERT INTO [mon_projet].[Employe] 
 VALUES('Eliezer', 'Mackendy', '03/28/2006', '', '', '',1);
 
+SELECT 
+
+/* 3. Afficher les employés qui ont participé à un projet qui est affecté à un service différent où il travaille.
+4. Afficher le matricule et le nom des employés qui ont participé à la réalisation de plusieurs projets.
+5. Afficher la durée de réalisation par projet : La durée de réalisation d’un projet = la date de fin de la
+dernière tache de ce projet - la date de début de la première tâche du projet (utiliser Min et Max).
+
+*/
 -- CREATION DE LOGIN
 CREATE LOGIN Maitre_oeuvre WITH PASSWORD = '1234' MUST_CHANGE, CHECK_EXPIRATION = ON;
 CREATE LOGIN "OCE\Test1" FROM WINDOWS
@@ -275,8 +296,19 @@ TO User_chef_Projet
 
 DENY CONTROL ON mon_projet.Employe
 TO User_chef_Projet
+GO
 
-GRANT UPDATE ON OBJECT::mon_projet.Employe(adresse)
-TO User_chef_Projet
+-- Creation de la vue 
+CREATE VIEW v_UpdateAdresse AS 
+SELECT adresse FROM mon_projet.Employe;
+
+GRANT UPDATE ON v_UpdateAdresse TO User_chef_Projet;
 
 
+-- CREATION DU ROLE
+CREATE ROLE Role_LMD;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA::mon_projet 
+TO Role_LMD;
+
+ALTER ROLE Role_LMD ADD MEMBER User_ADM_instance;
